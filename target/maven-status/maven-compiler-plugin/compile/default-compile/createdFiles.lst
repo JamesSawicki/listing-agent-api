@@ -1,0 +1,7 @@
+com\jimrealty\listingagent\service\ListingService.class
+com\jimrealty\listingagent\model\Listing.class
+com\jimrealty\listingagent\config\CorsConfig.class
+com\jimrealty\listingagent\model\Listing$ListingBuilder.class
+com\jimrealty\listingagent\ListingAgentApplication.class
+com\jimrealty\listingagent\repository\ListingRepository.class
+com\jimrealty\listingagent\controller\ListingController.class
