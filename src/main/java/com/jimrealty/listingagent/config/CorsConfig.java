@@ -13,15 +13,16 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
 
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/api/**")          // apply to all /api/ routes
-                .allowedOrigins(
-                    "http://localhost:3000",    // React dev server (Create React App)
-                    "http://localhost:5173"     // React dev server (Vite)
-                )
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("*")
-                .allowCredentials(true);
-    }
+@Override
+public void addCorsMappings(CorsRegistry registry) {
+    registry.addMapping("/api/**")
+            .allowedOrigins(
+                "http://localhost:3000",
+                "http://localhost:5173",
+                "https://listing-agent-api.vercel.app"  // ← add your actual Vercel URL
+            )
+            .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+            .allowedHeaders("*")
+            .allowCredentials(true);
+}
 }
