@@ -41,12 +41,18 @@
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
         </dependency>
-            <!-- Rate limiting -->
+
+        <!-- Rate limiting -->
         <dependency>
             <groupId>com.bucket4j</groupId>
             <artifactId>bucket4j-core</artifactId>
             <version>8.10.1</version>
-
+        </dependency>
+        
+        <!-- Spring Security -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
         <!-- Lombok: Eliminates boilerplate (getters, setters, constructors) -->
