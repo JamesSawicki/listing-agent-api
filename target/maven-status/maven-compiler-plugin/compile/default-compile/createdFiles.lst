@@ -1,9 +1,12 @@
 com\jimrealty\listingagent\controller\ChatController.class
-com\jimrealty\listingagent\service\ListingService.class
 com\jimrealty\listingagent\model\Listing.class
 com\jimrealty\listingagent\config\CorsConfig.class
+com\jimrealty\listingagent\config\SecurityConfig.class
+com\jimrealty\listingagent\model\ChatRequest.class
+com\jimrealty\listingagent\controller\ListingController.class
+com\jimrealty\listingagent\model\ListingSearchParams.class
+com\jimrealty\listingagent\service\ListingService.class
+com\jimrealty\listingagent\spec\ListingSpecification.class
 com\jimrealty\listingagent\model\Listing$ListingBuilder.class
 com\jimrealty\listingagent\ListingAgentApplication.class
 com\jimrealty\listingagent\repository\ListingRepository.class
-com\jimrealty\listingagent\model\ChatRequest.class
-com\jimrealty\listingagent\controller\ListingController.class
