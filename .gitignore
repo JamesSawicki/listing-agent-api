@@ -2,3 +2,7 @@
 .env.local
 .github/java-upgrade/
 
+target/
+*.class
+.idea/
+*.iml
