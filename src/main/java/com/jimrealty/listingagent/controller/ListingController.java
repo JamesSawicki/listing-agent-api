@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -63,7 +64,7 @@ public class ListingController {
      *   /api/listings/search?status=Sold&page=1&size=12
      */
     @GetMapping("/search")
-    public ResponseEntity<Page<Listing>> searchListings(@ModelAttribute ListingSearchParams params) {
+    public ResponseEntity<Page<Listing>> searchListings(@ModelAttribute @NonNull ListingSearchParams params) {
         return ResponseEntity.ok(listingService.searchListings(params));
     }
 
@@ -77,24 +78,24 @@ public class ListingController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Listing> getListingById(@PathVariable Long id) {
+    public ResponseEntity<Listing> getListingById(@PathVariable @NonNull Long id) {
         return ResponseEntity.ok(listingService.getListingById(id));
     }
 
     @PostMapping
-    public ResponseEntity<Listing> createListing(@Valid @RequestBody Listing listing) {
+    public ResponseEntity<Listing> createListing(@Valid @RequestBody @NonNull Listing listing) {
         return ResponseEntity.status(HttpStatus.CREATED).body(listingService.createListing(listing));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Listing> updateListing(
-            @PathVariable Long id,
+            @PathVariable @NonNull Long id,
             @Valid @RequestBody Listing listing) {
         return ResponseEntity.ok(listingService.updateListing(id, listing));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteListing(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteListing(@PathVariable @NonNull Long id) {
         listingService.deleteListing(id);
         return ResponseEntity.noContent().build();
     }

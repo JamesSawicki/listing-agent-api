@@ -1,12 +1,15 @@
 package com.jimrealty.listingagent.controller;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.Cache;
+
 import com.jimrealty.listingagent.model.ChatRequest;
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
-import io.github.bucket4j.Refill;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -14,7 +17,7 @@ import org.springframework.web.client.RestTemplate;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/api/chat")
@@ -26,26 +29,26 @@ public class ChatController {
 
     // ─────────────────────────────────────────────
     // RATE LIMITER
-    // One bucket per IP address. Each bucket holds
-    // 10 tokens and refills at 10 per hour.
-    // A "token" is consumed on each request.
-    // When the bucket is empty, the request is denied.
-    // ConcurrentHashMap is thread-safe — multiple
-    // requests can arrive simultaneously.
     // ─────────────────────────────────────────────
-    private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
+    private final Cache<String, Bucket> buckets = Caffeine.newBuilder()
+    .expireAfterAccess(2, TimeUnit.HOURS)
+    .maximumSize(10_000)
+    .build();
+    
+    private final RestTemplate restTemplate;
+
+    private static Bucket createBucket() {
+        Bandwidth limit = Bandwidth.builder()
+                .capacity(10)
+                .refillGreedy(10, Duration.ofHours(1))
+                .build();
+        return Bucket.builder()
+                .addLimit(limit)
+                .build();
+    }
 
     private Bucket getBucketForIp(String ip) {
-        return buckets.computeIfAbsent(ip, key -> {
-            // Allow 10 requests per hour per IP
-            Bandwidth limit = Bandwidth.classic(
-                10,
-                Refill.greedy(10, Duration.ofHours(1))
-            );
-            return Bucket.builder()
-                    .addLimit(limit)
-                    .build();
-        });
+        return buckets.get(ip, key -> createBucket());
     }
 
     private String getRealIp(HttpServletRequest request) {
@@ -57,12 +60,12 @@ public class ChatController {
         return request.getRemoteAddr();
     }
 
+    @SuppressWarnings("null")
     @PostMapping
     public ResponseEntity<?> chat(
             @RequestBody ChatRequest chatRequest,
             HttpServletRequest request) {
 
-        // Check rate limit for this IP
         String ip = getRealIp(request);
         Bucket bucket = getBucketForIp(ip);
 
@@ -71,8 +74,6 @@ public class ChatController {
             error.put("error", "Too many requests. Please wait before sending another message.");
             return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(error);
         }
-
-        RestTemplate restTemplate = new RestTemplate();
 
         Map<String, Object> body = new HashMap<>();
         body.put("model", "claude-sonnet-4-5");
@@ -87,10 +88,11 @@ public class ChatController {
 
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
 
-        ResponseEntity<Map> response = restTemplate.postForEntity(
+        ResponseEntity<Map<String, Object>> response = restTemplate.exchange(  // ← exchange + PTR
             "https://api.anthropic.com/v1/messages",
+            HttpMethod.POST,
             entity,
-            Map.class
+            new ParameterizedTypeReference<Map<String, Object>>() {}
         );
 
         return ResponseEntity.ok(response.getBody());

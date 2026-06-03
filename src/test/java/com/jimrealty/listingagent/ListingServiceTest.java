@@ -115,10 +115,12 @@ class ListingServiceTest {
     // createListing
     // ----------------------------------------------------------------------
 
+    @SuppressWarnings("null")
     @Test
     void createListing_savesAndReturnsListing() {
         when(listingRepository.save(any(Listing.class))).thenReturn(sampleListing);
 
+        @SuppressWarnings("null")
         Listing result = listingService.createListing(sampleListing);
 
         assertThat(result.getId()).isEqualTo(1L);
@@ -129,6 +131,7 @@ class ListingServiceTest {
     // updateListing
     // ----------------------------------------------------------------------
 
+    @SuppressWarnings("null")
     @Test
     void updateListing_whenExists_savesUpdatedListing() {
         Listing update = Listing.builder()
@@ -175,11 +178,12 @@ class ListingServiceTest {
     // an integration concern that requires a real (or @DataJpaTest) database.
     // ----------------------------------------------------------------------
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "null" })
     @Test
     void searchListings_withDefaultParams_callsRepositoryWithSpec() {
         ListingSearchParams params = new ListingSearchParams();
 
+        @SuppressWarnings("null")
         Page<Listing> mockPage = new PageImpl<>(List.of(sampleListing));
         when(listingRepository.findAll(any(Specification.class), any(Pageable.class)))
                 .thenReturn(mockPage);
@@ -191,7 +195,7 @@ class ListingServiceTest {
         verify(listingRepository).findAll(any(Specification.class), any(Pageable.class));
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "null" })
     @Test
     void searchListings_withCustomPageSize_passesThroughPageable() {
         ListingSearchParams params = new ListingSearchParams();

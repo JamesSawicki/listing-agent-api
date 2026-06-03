@@ -1,9 +1,11 @@
 package com.jimrealty.listingagent.config;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
+import org.springframework.web.client.RestTemplate;
+import org.springframework.context.annotation.Bean;
 // CORS (Cross-Origin Resource Sharing) is a browser security policy that blocks
 // requests from one origin (http://localhost:3000) to another (http://localhost:8080)
 // by default. Without this config, your React frontend will get a CORS error
@@ -12,7 +14,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class CorsConfig implements WebMvcConfigurer {
 
     @Override
-    public void addCorsMappings(CorsRegistry registry) {
+    public void addCorsMappings(@NonNull CorsRegistry registry) {
         registry.addMapping("/api/**")
                 .allowedOrigins(
                     "http://localhost:3000",
@@ -25,4 +27,9 @@ public class CorsConfig implements WebMvcConfigurer {
                 .allowedHeaders("*")
                 .allowCredentials(true);
     }
+
+@Bean
+public RestTemplate restTemplate() {
+    return new RestTemplate();
+}
 }
