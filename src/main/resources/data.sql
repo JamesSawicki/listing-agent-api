@@ -5,7 +5,7 @@
 
 -- Schema note: H2 requires column list when not inserting all columns.
 -- Columns not listed receive NULL. TEXT columns handle multi-sentence strings.
--- Dates stored as VARCHAR strings matching MLS format: MM/DD/YYYY
+-- Dates stored as ISO 8601 (YYYY-MM-DD) matching LocalDate field type in Listing.java
 
 INSERT INTO listings (
     mls_id, status, list_date, pending_date, close_date, days_on_market,
@@ -34,7 +34,7 @@ INSERT INTO listings (
 
 -- 1. Active | Single Family | Edina | $875,000
 (
-    '7001001', 'Active', '03/15/2026', NULL, NULL, 22,
+    '7001001', 'Active', '2026-03-15', NULL, NULL, 22,
     875000, 875000, NULL,
     '5824 Interlachen Blvd', 'Edina', '55436', 'Hennepin', 'Interlachen Park', NULL,
     'Single Family', 'Two Story', 1987, 'Two', 'Previously Owned',
@@ -53,7 +53,7 @@ INSERT INTO listings (
     'Ceiling Fan(s), Deck, Hardwood Floors, In-Ground Sprinkler, Kitchen Center Island, Primary Bedroom Walk-In Closet, Vaulted Ceiling(s)',
     'Attached Garage, Driveway - Asphalt', 'Laundry Room, Lower Level', 'Cash, Conventional',
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    '0', NULL, NULL, NULL, NULL,
+    NULL, NULL, NULL, NULL, NULL,
     '12450', '2026', '12450',
     'Highlands', 'Highlands', 'Edina', '273 - Edina',
     'James Sawicki', '612-555-0100', '502000001',
@@ -64,7 +64,7 @@ INSERT INTO listings (
 
 -- 2. Active | Single Family | Wayzata | Lakefront | $3,200,000
 (
-    '7001002', 'Active', '02/28/2026', NULL, NULL, 37,
+    '7001002', 'Active', '2026-02-28', NULL, NULL, 37,
     3200000, 3200000, NULL,
     '1845 Ferndale Rd', 'Wayzata', '55391', 'Hennepin', NULL, NULL,
     'Single Family', 'Two Story', 2004, 'Two', 'Previously Owned',
@@ -84,7 +84,7 @@ INSERT INTO listings (
     'Attached Garage, Driveway - Asphalt, Heated Garage, Insulated Garage', 'Laundry Room, Main Level', 'Cash, Conventional',
     145, 'West, Lake', 'Lake Minnetonka', 'Lake',
     'General Development', '27013300', '14205.6', '113', 'Sand',
-    '0', NULL, NULL, NULL, NULL,
+    NULL, NULL, NULL, NULL, NULL,
     '28400', '2026', '28400',
     'Wayzata', 'Wayzata', 'Wayzata', '284 - Wayzata',
     'James Sawicki', '612-555-0100', '502000001',
@@ -95,7 +95,7 @@ INSERT INTO listings (
 
 -- 3. Active | Condo | Minneapolis | $389,000
 (
-    '7001003', 'Active', '04/01/2026', NULL, NULL, 8,
+    '7001003', 'Active', '2026-04-01', NULL, NULL, 8,
     389000, 399000, NULL,
     '100 3rd Ave S Unit 2805', 'Minneapolis', '55401', 'Hennepin', 'Mill District', 'Mill District Residences',
     'Condo', 'High Rise', 2002, 'One', 'Previously Owned',
@@ -125,7 +125,7 @@ INSERT INTO listings (
 
 -- 4. Pending | Single Family | Eden Prairie | $625,000
 (
-    '7001004', 'Pending', '03/05/2026', '04/02/2026', NULL, 28,
+    '7001004', 'Pending', '2026-03-05', '2026-04-02', NULL, 28,
     625000, 649000, NULL,
     '9217 Olympia Dr', 'Eden Prairie', '55347', 'Hennepin', NULL, 'Bearpath',
     'Single Family', 'Two Story', 1995, 'Two', 'Previously Owned',
@@ -144,7 +144,7 @@ INSERT INTO listings (
     'Ceiling Fan(s), Deck, Hardwood Floors, In-Ground Sprinkler, Kitchen Center Island, Primary Bedroom Walk-In Closet',
     'Attached Garage, Driveway - Asphalt', 'Laundry Room, Main Level', 'Cash, Conventional, FHA',
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    '0', NULL, NULL, NULL, NULL,
+    NULL, NULL, NULL, NULL, NULL,
     '8200', '2026', '8200',
     'Cedar Ridge', 'Southwest', 'Eden Prairie', '272 - Eden Prairie',
     'James Sawicki', '612-555-0100', '502000001',
@@ -155,7 +155,7 @@ INSERT INTO listings (
 
 -- 5. Sold | Single Family | Minnetonka | $542,000
 (
-    '7001005', 'Sold', '01/10/2026', '01/28/2026', '03/14/2026', 18,
+    '7001005', 'Sold', '2026-01-10', '2026-01-28', '2026-03-14', 18,
     549000, 549000, 542000,
     '4412 Shady Oak Rd', 'Minnetonka', '55343', 'Hennepin', NULL, NULL,
     'Single Family', 'Split Level', 1972, 'Multi/Split', 'Previously Owned',
@@ -174,7 +174,7 @@ INSERT INTO listings (
     'Ceiling Fan(s), Deck, Hardwood Floors',
     'Attached Garage, Driveway - Asphalt', 'In-Unit', 'Cash, Conventional, FHA',
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    '0', NULL, NULL, NULL, NULL,
+    NULL, NULL, NULL, NULL, NULL,
     '7100', '2025', '7100',
     'Scenic Heights', 'Minnetonka', 'Minnetonka', '276 - Minnetonka',
     'James Sawicki', '612-555-0100', '502000001',
@@ -185,7 +185,7 @@ INSERT INTO listings (
 
 -- 6. Active | Townhouse | Plymouth | $415,000
 (
-    '7001006', 'Active', '04/05/2026', NULL, NULL, 4,
+    '7001006', 'Active', '2026-04-05', NULL, NULL, 4,
     415000, 415000, NULL,
     '3380 Vagabond Ln N', 'Plymouth', '55441', 'Hennepin', NULL, 'Kingsview',
     'Townhouse', 'Two Story', 2015, 'Two', 'Previously Owned',
@@ -216,7 +216,7 @@ INSERT INTO listings (
 
 -- 7. Active | Single Family | Orono | Lakefront | $7,500,000
 (
-    '7001007', 'Active', '02/01/2026', NULL, NULL, 60,
+    '7001007', 'Active', '2026-02-01', NULL, NULL, 60,
     7500000, 7900000, NULL,
     '2180 Shadywood Rd', 'Orono', '55364', 'Hennepin', NULL, NULL,
     'Single Family', 'One Story', 2019, 'One', 'Previously Owned',
@@ -236,7 +236,7 @@ INSERT INTO listings (
     'Attached Garage, Driveway - Asphalt, Heated Garage, Insulated Garage', 'Laundry Room, Main Level', 'Cash, Conventional',
     200, 'West, South, Lake', 'Lake Minnetonka', 'Lake',
     'General Development', '27013300', '14205.6', '113', 'Sand',
-    '0', NULL, NULL, NULL, NULL,
+    NULL, NULL, NULL, NULL, NULL,
     '64000', '2026', '64000',
     'Orono', 'Orono', 'Orono', '278 - Orono',
     'James Sawicki', '612-555-0100', '502000001',
@@ -247,7 +247,7 @@ INSERT INTO listings (
 
 -- 8. TNAS | Single Family | Minnetonka Beach | $1,450,000
 (
-    '7001008', 'TNAS', '03/20/2026', NULL, NULL, 17,
+    '7001008', 'TNAS', '2026-03-20', NULL, NULL, 17,
     1450000, 1450000, NULL,
     '4580 Vine Hill Rd', 'Minnetonka Beach', '55361', 'Hennepin', NULL, NULL,
     'Single Family', 'Two Story', 1991, 'Two', 'Previously Owned',
@@ -266,7 +266,7 @@ INSERT INTO listings (
     'Ceiling Fan(s), Deck, Hardwood Floors, In-Ground Sprinkler, Kitchen Center Island, Patio, Primary Bedroom Walk-In Closet, Vaulted Ceiling(s)',
     'Attached Garage, Driveway - Asphalt', 'Laundry Room, Main Level', 'Cash, Conventional',
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    '0', NULL, NULL, NULL, NULL,
+    NULL, NULL, NULL, NULL, NULL,
     '18200', '2026', '18200',
     'Minnetonka Beach', 'Wayzata', 'Wayzata', '284 - Wayzata',
     'James Sawicki', '612-555-0100', '502000001',
@@ -277,7 +277,7 @@ INSERT INTO listings (
 
 -- 9. Active | Single Family | Deephaven | $1,100,000
 (
-    '7001009', 'Active', '03/28/2026', NULL, NULL, 11,
+    '7001009', 'Active', '2026-03-28', NULL, NULL, 11,
     1100000, 1100000, NULL,
     '20240 Cottagewood Rd', 'Deephaven', '55331', 'Hennepin', 'Cottagewood', NULL,
     'Single Family', 'One Story', 1962, 'One', 'Previously Owned',
@@ -296,7 +296,7 @@ INSERT INTO listings (
     'Ceiling Fan(s), Deck, Hardwood Floors, Kitchen Center Island, Patio, Panoramic View',
     'Attached Garage, Driveway - Asphalt', 'Laundry Room, Lower Level', 'Cash, Conventional',
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    '0', NULL, NULL, NULL, NULL,
+    NULL, NULL, NULL, NULL, NULL,
     '14800', '2026', '14800',
     'Cottagewood', 'Minnetonka', 'Minnetonka', '276 - Minnetonka',
     'James Sawicki', '612-555-0100', '502000001',
@@ -307,7 +307,7 @@ INSERT INTO listings (
 
 -- 10. Active | Single Family | St. Louis Park | $499,000
 (
-    '7001010', 'Active', '04/07/2026', NULL, NULL, 2,
+    '7001010', 'Active', '2026-04-07', NULL, NULL, 2,
     499000, 499000, NULL,
     '2744 Inglewood Ave S', 'St. Louis Park', '55416', 'Hennepin', 'Minikahda Vista', NULL,
     'Single Family', 'One Story', 1955, 'One', 'Previously Owned',
@@ -326,7 +326,7 @@ INSERT INTO listings (
     'Ceiling Fan(s), Hardwood Floors',
     'Detached Garage, Driveway - Asphalt', 'In-Unit', 'Cash, Conventional, FHA',
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    '0', NULL, NULL, NULL, NULL,
+    NULL, NULL, NULL, NULL, NULL,
     '6400', '2026', '6400',
     'Aquila', 'St. Louis Park', 'St. Louis Park', '283 - St. Louis Park',
     'James Sawicki', '612-555-0100', '502000001',
@@ -337,7 +337,7 @@ INSERT INTO listings (
 
 -- 11. Sold | Condo | Edina | $268,000
 (
-    '7001011', 'Sold', '01/20/2026', '02/05/2026', '03/07/2026', 16,
+    '7001011', 'Sold', '2026-01-20', '2026-02-05', '2026-03-07', 16,
     275000, 285000, 268000,
     '3901 W 50th St Unit 101', 'Edina', '55424', 'Hennepin', '50th and France', 'Edina Towers',
     'Condo', 'Low Rise', 1968, 'One', 'Previously Owned',
@@ -367,7 +367,7 @@ INSERT INTO listings (
 
 -- 12. Active | Single Family | Excelsior | $725,000
 (
-    '7001012', 'Active', '03/10/2026', NULL, NULL, 29,
+    '7001012', 'Active', '2026-03-10', NULL, NULL, 29,
     725000, 749000, NULL,
     '331 Oak St', 'Excelsior', '55331', 'Hennepin', 'Downtown Excelsior', NULL,
     'Single Family', 'Two Story', 1912, 'Two', 'Previously Owned',
@@ -386,7 +386,7 @@ INSERT INTO listings (
     'Ceiling Fan(s), French Doors, Hardwood Floors, Natural Woodwork, Paneled Doors, Porch',
     'Detached Garage, Driveway - Asphalt', 'In-Unit, Lower Level', 'Cash, Conventional',
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    '0', NULL, NULL, NULL, NULL,
+    NULL, NULL, NULL, NULL, NULL,
     '9200', '2026', '9200',
     'Excelsior', 'Minnetonka', 'Minnetonka', '276 - Minnetonka',
     'James Sawicki', '612-555-0100', '502000001',
@@ -397,7 +397,7 @@ INSERT INTO listings (
 
 -- 13. Pending | Single Family | Minnetonka | $559,000
 (
-    '7001013', 'Pending', '03/18/2026', '04/06/2026', NULL, 19,
+    '7001013', 'Pending', '2026-03-18', '2026-04-06', NULL, 19,
     559000, 579000, NULL,
     '6015 Glenwood Rd', 'Minnetonka', '55345', 'Hennepin', NULL, NULL,
     'Single Family', 'Split Level', 1978, 'Multi/Split', 'Previously Owned',
@@ -416,7 +416,7 @@ INSERT INTO listings (
     'Ceiling Fan(s), Deck, Hardwood Floors',
     'Attached Garage, Driveway - Asphalt', 'In-Unit, Lower Level', 'Cash, Conventional, FHA',
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    '0', NULL, NULL, NULL, NULL,
+    NULL, NULL, NULL, NULL, NULL,
     '7400', '2026', '7400',
     'Scenic Heights', 'Minnetonka', 'Minnetonka', '276 - Minnetonka',
     'James Sawicki', '612-555-0100', '502000001',
@@ -427,7 +427,7 @@ INSERT INTO listings (
 
 -- 14. Active | Single Family | Long Lake | $850,000
 (
-    '7001014', 'Active', '03/22/2026', NULL, NULL, 15,
+    '7001014', 'Active', '2026-03-22', NULL, NULL, 15,
     850000, 850000, NULL,
     '1440 Willow Dr', 'Long Lake', '55356', 'Hennepin', NULL, NULL,
     'Single Family', 'Two Story', 2001, 'Two', 'Previously Owned',
@@ -446,7 +446,7 @@ INSERT INTO listings (
     'Ceiling Fan(s), Deck, Hardwood Floors, In-Ground Sprinkler, Kitchen Center Island, Patio, Primary Bedroom Walk-In Closet, Vaulted Ceiling(s)',
     'Attached Garage, Driveway - Asphalt, Heated Garage', 'Laundry Room, Main Level', 'Cash, Conventional',
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    '0', NULL, NULL, NULL, NULL,
+    NULL, NULL, NULL, NULL, NULL,
     '10800', '2026', '10800',
     'Long Lake', 'Wayzata', 'Wayzata', '284 - Wayzata',
     'James Sawicki', '612-555-0100', '502000001',
@@ -457,7 +457,7 @@ INSERT INTO listings (
 
 -- 15. Active | Single Family | Hopkins | $349,000
 (
-    '7001015', 'Active', '04/04/2026', NULL, NULL, 5,
+    '7001015', 'Active', '2026-04-04', NULL, NULL, 5,
     349000, 349000, NULL,
     '15 Jackson Ave N', 'Hopkins', '55343', 'Hennepin', 'East Hopkins', NULL,
     'Single Family', 'One Story', 1949, 'One', 'Previously Owned',
@@ -476,7 +476,7 @@ INSERT INTO listings (
     'Hardwood Floors',
     'Detached Garage, Driveway - Asphalt', 'In-Unit, Lower Level', 'Cash, Conventional, FHA, VA',
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    '0', NULL, NULL, NULL, NULL,
+    NULL, NULL, NULL, NULL, NULL,
     '4100', '2026', '4100',
     'Hopkins', 'Eisenhower', 'Hopkins', '270 - Hopkins',
     'James Sawicki', '612-555-0100', '502000001',
@@ -487,7 +487,7 @@ INSERT INTO listings (
 
 -- 16. Sold | Single Family | Wayzata | $2,100,000
 (
-    '7001016', 'Sold', '12/01/2025', '12/18/2025', '02/14/2026', 17,
+    '7001016', 'Sold', '2025-12-01', '2025-12-18', '2026-02-14', 17,
     2195000, 2195000, 2100000,
     '415 Bushaway Rd', 'Wayzata', '55391', 'Hennepin', NULL, NULL,
     'Single Family', 'Two Story', 2008, 'Two', 'Previously Owned',
@@ -506,7 +506,7 @@ INSERT INTO listings (
     'Ceiling Fan(s), Deck, Hardwood Floors, In-Ground Sprinkler, Kitchen Center Island, Primary Bedroom Walk-In Closet, Screened Porch, Security System, Vaulted Ceiling(s)',
     'Attached Garage, Driveway - Asphalt, Heated Garage', 'Laundry Room, Main Level', 'Cash, Conventional',
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    '0', NULL, NULL, NULL, NULL,
+    NULL, NULL, NULL, NULL, NULL,
     '24000', '2025', '24000',
     'Wayzata', 'Wayzata', 'Wayzata', '284 - Wayzata',
     'James Sawicki', '612-555-0100', '502000001',
@@ -517,7 +517,7 @@ INSERT INTO listings (
 
 -- 17. Active | Single Family | Shorewood | $599,000
 (
-    '7001017', 'Active', '04/02/2026', NULL, NULL, 7,
+    '7001017', 'Active', '2026-04-02', NULL, NULL, 7,
     599000, 599000, NULL,
     '24880 Forest Blvd', 'Shorewood', '55331', 'Hennepin', NULL, NULL,
     'Single Family', 'Two Story', 1989, 'Two', 'Previously Owned',
@@ -536,7 +536,7 @@ INSERT INTO listings (
     'Ceiling Fan(s), Deck, Hardwood Floors, Kitchen Center Island, Primary Bedroom Walk-In Closet',
     'Attached Garage, Driveway - Asphalt', 'Laundry Room, Lower Level', 'Cash, Conventional',
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    '0', NULL, NULL, NULL, NULL,
+    NULL, NULL, NULL, NULL, NULL,
     '8600', '2026', '8600',
     'Minnetonka', 'Minnetonka', 'Minnetonka', '276 - Minnetonka',
     'James Sawicki', '612-555-0100', '502000001',
@@ -547,7 +547,7 @@ INSERT INTO listings (
 
 -- 18. Active | Single Family | Orono | $1,795,000
 (
-    '7001018', 'Active', '03/01/2026', NULL, NULL, 38,
+    '7001018', 'Active', '2026-03-01', NULL, NULL, 38,
     1795000, 1895000, NULL,
     '3005 Orono Orchard Rd', 'Orono', '55356', 'Hennepin', NULL, NULL,
     'Single Family', 'One Story', 2014, 'One', 'Previously Owned',
@@ -566,7 +566,7 @@ INSERT INTO listings (
     'Ceiling Fan(s), Deck, Exercise Room, Hardwood Floors, In-Ground Sprinkler, Kitchen Center Island, Patio, Primary Bedroom Walk-In Closet, Screened Porch, Security System, Vaulted Ceiling(s)',
     'Attached Garage, Driveway - Asphalt, Heated Garage, Insulated Garage', 'Laundry Room, Main Level', 'Cash, Conventional',
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    '0', NULL, NULL, NULL, NULL,
+    NULL, NULL, NULL, NULL, NULL,
     '22000', '2026', '22000',
     'Orono', 'Orono', 'Orono', '278 - Orono',
     'James Sawicki', '612-555-0100', '502000001',
@@ -577,7 +577,7 @@ INSERT INTO listings (
 
 -- 19. Active | Townhouse | Minnetonka | $329,000
 (
-    '7001019', 'Active', '04/06/2026', NULL, NULL, 3,
+    '7001019', 'Active', '2026-04-06', NULL, NULL, 3,
     329000, 329000, NULL,
     '14820 Ironwood Ct', 'Minnetonka', '55345', 'Hennepin', NULL, 'Ironwood',
     'Townhouse', 'Two Story', 2003, 'Two', 'Previously Owned',
@@ -607,7 +607,7 @@ INSERT INTO listings (
 
 -- 20. Active | Single Family | Victoria | $685,000
 (
-    '7001020', 'Active', '03/25/2026', NULL, NULL, 14,
+    '7001020', 'Active', '2026-03-25', NULL, NULL, 14,
     685000, 685000, NULL,
     '8455 Deer Run Dr', 'Victoria', '55386', 'Carver', NULL, 'Deer Run',
     'Single Family', 'Two Story', 2006, 'Two', 'Previously Owned',
@@ -626,7 +626,7 @@ INSERT INTO listings (
     'Ceiling Fan(s), Deck, Hardwood Floors, In-Ground Sprinkler, Kitchen Center Island, Primary Bedroom Walk-In Closet',
     'Attached Garage, Driveway - Asphalt', 'Laundry Room, Main Level', 'Cash, Conventional',
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    '0', NULL, NULL, NULL, NULL,
+    NULL, NULL, NULL, NULL, NULL,
     '8900', '2026', '8900',
     'Victoria', 'Chaska', 'Chaska', '112 - Eastern Carver County',
     'James Sawicki', '612-555-0100', '502000001',
