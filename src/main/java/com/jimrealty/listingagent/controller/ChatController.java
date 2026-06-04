@@ -60,7 +60,6 @@ public class ChatController {
         return request.getRemoteAddr();
     }
 
-    @SuppressWarnings("null")
     @PostMapping
     public ResponseEntity<?> chat(
             @RequestBody ChatRequest chatRequest,

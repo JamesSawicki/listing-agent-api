@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 /**
  * Listing entity — mirrors the NorthStar MLS / RESO Web API field structure.
  *
@@ -36,7 +38,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "listings")
+@Table(name = "listings", indexes = {
+    @Index(name = "idx_listing_lat_lng", columnList = "latitude, longitude"),
+    @Index(name = "idx_listing_status",  columnList = "status")
+})
 public class Listing {
 
     // -------------------------------------------------------------------------
@@ -56,9 +61,9 @@ public class Listing {
     /** Active | Pending | Sold | TNAS | Withdrawn | Expired | Cancelled | Coming Soon */
     private String status;
 
-    private String listDate;
-    private String pendingDate;
-    private String closeDate;
+    private LocalDate listDate;
+    private LocalDate pendingDate;
+    private LocalDate closeDate;
     private Integer daysOnMarket;
 
     private Long listPrice;
