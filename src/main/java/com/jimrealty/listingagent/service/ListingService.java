@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,22 +34,22 @@ public class ListingService {
         return listingRepository.findAll();
     }
 
-    public Listing getListingById(@NonNull Long id) {
+    public Listing getListingById(Long id) {
         return listingRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Listing not found: " + id));
     }
 
-    public Listing createListing(@NonNull Listing listing) {
+    public Listing createListing(Listing listing) {
         return listingRepository.save(listing);
     }
 
-    public Listing updateListing(@NonNull Long id, Listing updated) {
+    public Listing updateListing(Long id, Listing updated) {
         Listing existing = getListingById(id);
         updated.setId(existing.getId());
         return listingRepository.save(updated);
     }
 
-    public void deleteListing(@NonNull Long id) {
+    public void deleteListing(Long id) {
         listingRepository.deleteById(id);
     }
 
@@ -74,8 +73,8 @@ public class ListingService {
      * @param params  Search filter parameters from the HTTP query string
      * @return        Paginated, filtered, sorted listing results
      */
-    @SuppressWarnings("null")
-    public Page<Listing> searchListings(@NonNull ListingSearchParams params) {
+   // @SuppressWarnings("null")
+    public Page<Listing> searchListings(ListingSearchParams params) {
         int page = params.getPage() != null ? params.getPage() : 0;
         int size = params.getSize() != null ? params.getSize() : 24;
 

@@ -4,8 +4,6 @@ import com.jimrealty.listingagent.model.Listing;
 import com.jimrealty.listingagent.model.ListingSearchParams;
 import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.lang.NonNull;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,7 +29,7 @@ import java.util.List;
  */
 public class ListingSpecification {
 
-    public static Specification<Listing> fromParams(@NonNull ListingSearchParams params) {
+    public static Specification<Listing> fromParams(ListingSearchParams params) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
