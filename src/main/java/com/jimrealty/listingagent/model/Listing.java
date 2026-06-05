@@ -246,6 +246,6 @@ public class Listing {
     // JSON blob — see comments at top of class for structure.
     // -------------------------------------------------------------------------
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "amenity_scores", columnDefinition = "TEXT")
     private String amenityScores;
 }

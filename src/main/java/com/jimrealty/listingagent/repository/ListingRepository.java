@@ -3,6 +3,8 @@ package com.jimrealty.listingagent.repository;
 import com.jimrealty.listingagent.model.Listing;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * ListingRepository — Spring Data JPA repository for Listing entities.
@@ -24,4 +26,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
  */
 public interface ListingRepository
         extends JpaRepository<Listing, Long>, JpaSpecificationExecutor<Listing> {
+
+        List<Listing> findByStatusIn(Collection<String> statuses);
 }

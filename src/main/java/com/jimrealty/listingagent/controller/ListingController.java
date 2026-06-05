@@ -9,7 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import com.jimrealty.listingagent.amenity.AmenityScoreService;
 import java.util.List;
 
 /**
@@ -35,7 +35,7 @@ import java.util.List;
 public class ListingController {
 
     private final ListingService listingService;
-
+    private final AmenityScoreService amenityScoreService;  
     // ------------------------------------------------------------------
     // Search — declare before /{id} to prevent path variable collision
     // ------------------------------------------------------------------
@@ -83,7 +83,12 @@ public class ListingController {
 
     @PostMapping
     public ResponseEntity<Listing> createListing(@Valid @RequestBody Listing listing) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(listingService.createListing(listing));
+        Listing saved = listingService.createListing(listing);
+
+        // Fire-and-forget amenity scoring. Service skips silently if coords missing.
+        amenityScoreService.scoreAndSaveAsync(saved.getId());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @PutMapping("/{id}")

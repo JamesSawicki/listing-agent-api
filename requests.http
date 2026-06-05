@@ -1,0 +1,50 @@
+### --- Variables ---
+@baseUrl = http://localhost:8080
+@railwayUrl = https://listing-agent-api-production.up.railway.app
+@adminAuth = Basic admin:randoPass3243!**
+
+### Get all listings (no auth required)
+GET {{baseUrl}}/api/listings
+
+### Get listing 1 — check the amenityScores field
+GET {{baseUrl}}/api/listings/1
+
+### Search active listings, first 5
+GET {{baseUrl}}/api/listings/search?status=Active&size=5
+
+### Bbox search (map view) — Twin Cities metro
+GET {{baseUrl}}/api/listings/search?minLat=44.85&maxLat=45.10&minLng=-93.45&maxLng=-93.10
+
+### === AMENITY SCORING (Phase 4 admin endpoints) ===
+
+### Trigger full batch refresh — returns 202 immediately, work happens in background
+POST {{baseUrl}}/api/scoring/refresh-all
+Authorization: {{adminAuth}}
+
+### Synchronously recompute one listing (5-15 seconds wait)
+POST {{baseUrl}}/api/scoring/listings/3
+Authorization: {{adminAuth}}
+
+### Verify scores populated
+GET {{baseUrl}}/api/listings/1
+
+### === CRUD with auth ===
+
+### Create a new listing (will trigger async scoring after save)
+POST {{baseUrl}}/api/listings
+Authorization: {{adminAuth}}
+Content-Type: application/json
+
+{
+  "mlsId": "TEST-001",
+  "status": "Active",
+  "listDate": "2026-06-04",
+  "listPrice": 750000,
+  "address": "123 Main St",
+  "city": "Minneapolis",
+  "zipCode": "55401",
+  "beds": 3,
+  "bathsFull": 2,
+  "latitude": 44.9778,
+  "longitude": -93.2650
+}
