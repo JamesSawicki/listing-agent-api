@@ -38,6 +38,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/listings/**").authenticated()
                 .requestMatchers(HttpMethod.PUT, "/api/listings/**").authenticated()
                 .requestMatchers(HttpMethod.DELETE, "/api/listings/**").authenticated()
+                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 .anyRequest().authenticated()
             )
             .httpBasic(httpBasic -> httpBasic.realmName("Listing Agent Admin"));
