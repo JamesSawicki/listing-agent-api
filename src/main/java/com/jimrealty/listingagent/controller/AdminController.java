@@ -1,12 +1,15 @@
 package com.jimrealty.listingagent.controller;
 
+import com.jimrealty.listingagent.media.MediaIngestionService;
 import com.jimrealty.listingagent.model.IngestionResult;
 import com.jimrealty.listingagent.service.MlsGridIngestionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
@@ -35,9 +38,12 @@ public class AdminController {
     private static final Logger log = LoggerFactory.getLogger(AdminController.class);
 
     private final MlsGridIngestionService ingestionService;
+    private final MediaIngestionService mediaIngestionService;
 
-    public AdminController(MlsGridIngestionService ingestionService) {
+    public AdminController(MlsGridIngestionService ingestionService,
+                           MediaIngestionService mediaIngestionService) {
         this.ingestionService = ingestionService;
+        this.mediaIngestionService = mediaIngestionService;
     }
 
     /**
@@ -107,6 +113,68 @@ public class AdminController {
             ));
         } catch (Exception e) {
             log.error("Delta sync failed", e);
+            return ResponseEntity.internalServerError().body(Map.of(
+                    "error", e.getMessage()
+            ));
+        }
+    }
+
+    /**
+     * POST /api/admin/media/backfill?limit=N
+     *
+     * Triggers asynchronous media backfill for the first N listings whose
+     * media has not yet been ingested to Cloudflare Images (or whose status
+     * is FAILED).
+     *
+     * Returns 202 immediately. Each listing involves multiple network
+     * round-trips (MLS Grid download + Cloudflare upload, plus a 600ms
+     * politeness sleep per file) so even N=10 can take a minute or two.
+     * Watch application logs for progress.
+     *
+     * Default limit is small (10) — set explicitly for larger runs:
+     *   POST /api/admin/media/backfill?limit=100
+     */
+    @PostMapping("/media/backfill")
+    public ResponseEntity<Map<String, Object>> triggerMediaBackfill(
+            @RequestParam(defaultValue = "10") int limit) {
+        log.info("Media backfill triggered via admin endpoint, limit={}", limit);
+        CompletableFuture.runAsync(() -> {
+            try {
+                mediaIngestionService.backfill(limit);
+            } catch (Exception e) {
+                log.error("Media backfill failed with unexpected error", e);
+            }
+        });
+        return ResponseEntity.accepted().body(Map.of(
+                "status",  "started",
+                "limit",   limit,
+                "message", "Media backfill started asynchronously. Watch application logs for progress."
+        ));
+    }
+
+    /**
+     * POST /api/admin/media/listing/{id}
+     *
+     * Synchronously ingests media for a single listing by surrogate ID.
+     * Used for verification and debugging during development. Blocks for
+     * up to ~30 seconds depending on photo count.
+     */
+    @PostMapping("/media/listing/{id}")
+    public ResponseEntity<Map<String, Object>> triggerSingleListingMediaIngest(
+            @PathVariable Long id) {
+        log.info("Sync media ingestion triggered for listing [{}]", id);
+        try {
+            MediaIngestionService.MediaIngestionResult result =
+                    mediaIngestionService.ingestForListing(id);
+            return ResponseEntity.ok(Map.of(
+                    "listingId",          id,
+                    "photosUploaded",     result.photosUploaded(),
+                    "floorPlansUploaded", result.floorPlansUploaded(),
+                    "tourLinks",          result.tourLinks(),
+                    "failed",             result.failed()
+            ));
+        } catch (Exception e) {
+            log.error("Sync media ingestion failed for listing [{}]", id, e);
             return ResponseEntity.internalServerError().body(Map.of(
                     "error", e.getMessage()
             ));

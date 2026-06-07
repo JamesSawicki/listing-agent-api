@@ -668,3 +668,129 @@ UPDATE listings SET latitude = 44.8978, longitude = -93.5535 WHERE mls_id = '700
 UPDATE listings SET latitude = 44.9820, longitude = -93.6275 WHERE mls_id = '7001018';
 UPDATE listings SET latitude = 44.9280, longitude = -93.4750 WHERE mls_id = '7001019';
 UPDATE listings SET latitude = 44.8580, longitude = -93.6510 WHERE mls_id = '7001020';
+
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- IDX COMPLIANCE TEST DATA — synthetic brokerage diversity (added June 2026)
+-- ─────────────────────────────────────────────────────────────────────────────
+-- The original 20 INSERTs all assigned list_office_name = 'Coldwell Banker
+-- Realty' and list_agent_name = 'James Sawicki', which made every synthetic
+-- listing resolve to isOwnListing() === true on the Astro side. That left
+-- the entire third-party / IDX-attribution code path unexercised in dev.
+--
+-- This block reassigns 12 of 20 listings to real Twin Cities competitor
+-- brokerages while preserving every other field (address, coords, rooms,
+-- amenities, etc.). Agent names and phone numbers are FICTITIOUS but
+-- structurally plausible — do not contact, do not publish.
+--
+-- Final split:
+--   8 listings → Coldwell Banker Realty / James Sawicki (own — UNCHANGED)
+--                7001001, 7001004, 7001009, 7001012, 7001014,
+--                7001017, 7001019, 7001020
+--   3 listings → Edina Realty, Inc.            (7001002, 7001006, 7001010)
+--   3 listings → RE/MAX Results                (7001003, 7001011, 7001015)
+--   2 listings → Coldwell Banker Burnet        (7001005, 7001013)
+--                CRITICAL TEST: shares "Coldwell Banker" prefix with our
+--                brokerage. isOwnListing() must classify these as third-party
+--                (false). Verifies the substring match doesn't false-positive.
+--   2 listings → Keller Williams Premier Realty (7001008, 7001018)
+--   2 listings → Lakes Sotheby's International  (7001007, 7001016)
+-- ─────────────────────────────────────────────────────────────────────────────
+
+-- Edina Realty, Inc.
+UPDATE listings SET
+    list_agent_name = 'Patricia Nelson',
+    list_agent_phone = '952-555-2010',
+    list_agent_mls_id = '502100201',
+    list_office_name = 'Edina Realty, Inc.',
+    list_office_phone = '952-925-8400',
+    list_office_mls_id = '1101'
+  WHERE mls_id IN ('7001002', '7001010');
+
+UPDATE listings SET
+    list_agent_name = 'David Anderson',
+    list_agent_phone = '952-555-2015',
+    list_agent_mls_id = '502100202',
+    list_office_name = 'Edina Realty, Inc.',
+    list_office_phone = '952-925-8400',
+    list_office_mls_id = '1101'
+  WHERE mls_id = '7001006';
+
+-- RE/MAX Results
+UPDATE listings SET
+    list_agent_name = 'Maria Hernandez',
+    list_agent_phone = '612-555-3020',
+    list_agent_mls_id = '502100302',
+    list_office_name = 'RE/MAX Results',
+    list_office_phone = '612-928-3232',
+    list_office_mls_id = '1201'
+  WHERE mls_id IN ('7001003', '7001011');
+
+UPDATE listings SET
+    list_agent_name = 'Robert Schultz',
+    list_agent_phone = '612-555-3025',
+    list_agent_mls_id = '502100303',
+    list_office_name = 'RE/MAX Results',
+    list_office_phone = '612-928-3232',
+    list_office_mls_id = '1201'
+  WHERE mls_id = '7001015';
+
+-- Coldwell Banker Burnet (NOT Coldwell Banker Realty — verifies substring
+-- match in isOwnListing() doesn't false-positive on the shared "Coldwell
+-- Banker" prefix)
+UPDATE listings SET
+    list_agent_name = 'Karen Lindstrom',
+    list_agent_phone = '952-555-4040',
+    list_agent_mls_id = '502100404',
+    list_office_name = 'Coldwell Banker Burnet',
+    list_office_phone = '952-475-3000',
+    list_office_mls_id = '1305'
+  WHERE mls_id IN ('7001005', '7001013');
+
+-- Keller Williams Premier Realty
+UPDATE listings SET
+    list_agent_name = 'Daniel O''Brien',
+    list_agent_phone = '612-555-5050',
+    list_agent_mls_id = '502100505',
+    list_office_name = 'Keller Williams Premier Realty',
+    list_office_phone = '612-925-1100',
+    list_office_mls_id = '1421'
+  WHERE mls_id IN ('7001008', '7001018');
+
+-- Lakes Sotheby's International Realty
+UPDATE listings SET
+    list_agent_name = 'Margaret Whitfield',
+    list_agent_phone = '952-555-6060',
+    list_agent_mls_id = '502100606',
+    list_office_name = 'Lakes Sotheby''s International Realty',
+    list_office_phone = '952-473-7000',
+    list_office_mls_id = '1583'
+  WHERE mls_id IN ('7001007', '7001016');
+
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- MODIFICATION TIMESTAMP — populates the "Data Updated" line on the IDX
+-- disclosure block. Varied across recent/older to exercise display states.
+-- Today's date for context: 2026-06-07.
+-- ─────────────────────────────────────────────────────────────────────────────
+
+UPDATE listings SET modification_timestamp = '2026-06-07 09:15:00' WHERE mls_id = '7001001';
+UPDATE listings SET modification_timestamp = '2026-06-06 14:30:00' WHERE mls_id = '7001002';
+UPDATE listings SET modification_timestamp = '2026-06-07 11:45:00' WHERE mls_id = '7001003';
+UPDATE listings SET modification_timestamp = '2026-06-05 08:00:00' WHERE mls_id = '7001004';
+UPDATE listings SET modification_timestamp = '2026-06-01 16:20:00' WHERE mls_id = '7001005';
+UPDATE listings SET modification_timestamp = '2026-06-04 10:00:00' WHERE mls_id = '7001006';
+UPDATE listings SET modification_timestamp = '2026-06-03 13:30:00' WHERE mls_id = '7001007';
+UPDATE listings SET modification_timestamp = '2026-05-28 09:00:00' WHERE mls_id = '7001008';
+UPDATE listings SET modification_timestamp = '2026-06-07 07:30:00' WHERE mls_id = '7001009';
+UPDATE listings SET modification_timestamp = '2026-06-06 22:00:00' WHERE mls_id = '7001010';
+UPDATE listings SET modification_timestamp = '2026-05-20 14:00:00' WHERE mls_id = '7001011';
+UPDATE listings SET modification_timestamp = '2026-06-05 11:30:00' WHERE mls_id = '7001012';
+UPDATE listings SET modification_timestamp = '2026-06-02 09:15:00' WHERE mls_id = '7001013';
+UPDATE listings SET modification_timestamp = '2026-06-04 16:45:00' WHERE mls_id = '7001014';
+UPDATE listings SET modification_timestamp = '2026-06-07 08:00:00' WHERE mls_id = '7001015';
+UPDATE listings SET modification_timestamp = '2026-05-15 10:00:00' WHERE mls_id = '7001016';
+UPDATE listings SET modification_timestamp = '2026-06-06 13:00:00' WHERE mls_id = '7001017';
+UPDATE listings SET modification_timestamp = '2026-06-01 11:00:00' WHERE mls_id = '7001018';
+UPDATE listings SET modification_timestamp = '2026-06-07 10:30:00' WHERE mls_id = '7001019';
+UPDATE listings SET modification_timestamp = '2026-06-05 15:00:00' WHERE mls_id = '7001020';

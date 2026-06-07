@@ -6,3 +6,6 @@ target/
 *.class
 .idea/
 *.iml
+
+requests.http
+dump.js

@@ -38,4 +38,18 @@ public interface ListingRepository
         // If null (empty DB), deltaSync falls back to a full historical pull.
         @Query("SELECT MAX(l.modificationTimestamp) FROM Listing l WHERE l.modificationTimestamp IS NOT NULL")
         Optional<Instant> findMaxModificationTimestamp();
+
+        /**
+         * Media-ingestion backfill candidates: any listing whose media has not
+         * been fully ingested to Cloudflare Images. Caller further filters to
+         * only those with mediaJson present.
+         *
+         * Status values: NULL = never attempted, PENDING/IN_PROGRESS = stuck or
+         * mid-flight, FAILED = retry candidate, COMPLETE = skip.
+         */
+        @Query("SELECT l FROM Listing l " +
+               "WHERE l.mediaIngestionStatus IS NULL " +
+               "   OR l.mediaIngestionStatus <> 'COMPLETE' " +
+               "ORDER BY l.id ASC")
+        List<Listing> findMediaIngestionPending();
 }

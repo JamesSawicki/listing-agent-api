@@ -324,11 +324,55 @@ public class Listing {
     /**
      * Full Media array from MLS Grid as a JSON string.
      * Each element: {key, order, url, width, height, modificationTimestamp}
-     * Used by the listing detail page photo carousel.
-     * In production, URLs must be replaced with locally hosted paths after download.
+     * Source-of-truth for delta sync — used by MediaIngestionService to detect
+     * which photos are new/changed since the last download. NEVER served to the
+     * public — these URLs require the MLS Grid OAuth2 token as User-Agent.
      */
     @Column(columnDefinition = "TEXT")
     private String mediaJson;
+
+    // -------------------------------------------------------------------------
+    // Hosted Media — populated by MediaIngestionService (Cloudflare Images)
+    // After download from MLS Grid + re-upload to Cloudflare Images, the
+    // returned CF Image IDs are stored here as JSON arrays. Delivery URLs
+    // built on the frontend via:
+    //   https://imagedelivery.net/{account-hash}/{id}/{variant}
+    // -------------------------------------------------------------------------
+
+    /**
+     * Cloudflare Images IDs for photos, in display order (Order=1 first).
+     * JSON array of strings, e.g. '["abc123","def456",...]'.
+     * Capped at 125 entries per defensive policy (current NorthstarMLS cap is
+     * ~50, but we leave headroom).
+     */
+    @Column(name = "photo_ids", columnDefinition = "TEXT")
+    private String photoIds;
+
+    /**
+     * Cloudflare Images IDs for floor plans, in display order.
+     * JSON array of strings. Distinct from photos so the gallery can render
+     * floor plans in their own section.
+     */
+    @Column(name = "floor_plan_ids", columnDefinition = "TEXT")
+    private String floorPlanIds;
+
+    /**
+     * External virtual tour URLs (Matterport, iGUIDE, etc.) — NOT downloaded.
+     * Stored as JSON array of objects: [{"provider":"matterport","url":"...","label":"3D Tour"}]
+     * Rendered as CTA chips on the listing detail page; opens in new tab or iframe.
+     */
+    @Column(name = "virtual_tour_urls", columnDefinition = "TEXT")
+    private String virtualTourUrls;
+
+    /**
+     * Tracks the state of media ingestion for this listing.
+     * Values: PENDING, IN_PROGRESS, COMPLETE, FAILED.
+     * NULL = legacy/synthetic listings with no media to ingest.
+     * Set to PENDING when the listing is upserted from MLS Grid; transitions
+     * through IN_PROGRESS to COMPLETE (or FAILED) as MediaIngestionService runs.
+     */
+    @Column(name = "media_ingestion_status")
+    private String mediaIngestionStatus;
 
     // -------------------------------------------------------------------------
     // Computed Scores (Phase 2 — populated by AmenityScoreService)

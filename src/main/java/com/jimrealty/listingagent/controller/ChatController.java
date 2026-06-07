@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 
 import java.time.Duration;
 import java.util.HashMap;
@@ -35,7 +35,7 @@ public class ChatController {
     .maximumSize(10_000)
     .build();
     
-    private final RestTemplate restTemplate;
+    private final RestClient restClient;
 
     private static Bucket createBucket() {
         Bandwidth limit = Bandwidth.builder()
@@ -87,13 +87,13 @@ public class ChatController {
 
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
 
-        ResponseEntity<Map<String, Object>> response = restTemplate.exchange(  // ← exchange + PTR
-            "https://api.anthropic.com/v1/messages",
-            HttpMethod.POST,
-            entity,
-            new ParameterizedTypeReference<Map<String, Object>>() {}
-        );
+    Map<String, Object> response = restClient.post()
+        .uri("https://api.anthropic.com/v1/messages")
+        .headers(h -> h.addAll(headers))
+        .body(body)
+        .retrieve()
+        .body(new ParameterizedTypeReference<>() {});
 
-        return ResponseEntity.ok(response.getBody());
+        return ResponseEntity.ok(response);
     }
 }

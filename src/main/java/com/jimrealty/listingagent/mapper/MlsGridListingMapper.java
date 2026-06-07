@@ -133,8 +133,22 @@ public class MlsGridListingMapper {
             .schoolDistrictNumber(text(p, "NST_SchoolDistrictNumber"))
 
             // --- Agent / office --------------------------------------------------
-            // Note: ListOfficeKey is the system key (e.g. "NST19846").
-            // Full office name/phone require expanding the Office resource separately.
+            // Per RESO Data Dictionary 1.7, all of these fields are denormalized
+            // directly on the Property record — no $expand needed.
+            //   ListAgentFullName / ListAgentPreferredPhone / ListAgentMlsId
+            //   ListOfficeName    / ListOfficePhone         / ListOfficeKey
+            // ListOfficeKey is the system key (e.g. "NST19846"); store it as
+            // listOfficeMlsId for display purposes (the MLS#-style ID).
+            // Some feeds use ListAgentDirectPhone instead of ListAgentPreferredPhone;
+            // fall back to it if Preferred is missing.
+            .listAgentName(text(p, "ListAgentFullName"))
+            .listAgentPhone(
+                    text(p, "ListAgentPreferredPhone") != null
+                            ? text(p, "ListAgentPreferredPhone")
+                            : text(p, "ListAgentDirectPhone"))
+            .listAgentMlsId(text(p, "ListAgentMlsId"))
+            .listOfficeName(text(p, "ListOfficeName"))
+            .listOfficePhone(text(p, "ListOfficePhone"))
             .listOfficeMlsId(text(p, "ListOfficeKey"))
 
             // --- Display ---------------------------------------------------------

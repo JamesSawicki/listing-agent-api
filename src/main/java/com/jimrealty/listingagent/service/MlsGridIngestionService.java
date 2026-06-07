@@ -3,6 +3,8 @@ package com.jimrealty.listingagent.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jimrealty.listingagent.mapper.MlsGridListingMapper;
+import com.jimrealty.listingagent.media.CloudflareImagesClient;
+import com.jimrealty.listingagent.media.MediaIngestionService;
 import com.jimrealty.listingagent.model.IngestionResult;
 import com.jimrealty.listingagent.model.Listing;
 import com.jimrealty.listingagent.repository.ListingRepository;
@@ -19,6 +21,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -85,6 +88,8 @@ public class MlsGridIngestionService {
     private final ObjectMapper objectMapper;
     private final MlsGridListingMapper mapper;
     private final ListingRepository listingRepository;
+    private final MediaIngestionService mediaIngestionService;
+    private final CloudflareImagesClient cloudflareImagesClient;
     private final String baseUrl;
     private final String originatingSystem;
 
@@ -92,6 +97,8 @@ public class MlsGridIngestionService {
             ObjectMapper objectMapper,
             MlsGridListingMapper mapper,
             ListingRepository listingRepository,
+            MediaIngestionService mediaIngestionService,
+            CloudflareImagesClient cloudflareImagesClient,
             @Value("${mls.grid.token}") String token,
             @Value("${mls.grid.base-url:https://api-demo.mlsgrid.com/v2}") String baseUrl,
             @Value("${mls.grid.originating-system:northstar}") String originatingSystem) {
@@ -99,6 +106,8 @@ public class MlsGridIngestionService {
         this.objectMapper = objectMapper;
         this.mapper = mapper;
         this.listingRepository = listingRepository;
+        this.mediaIngestionService = mediaIngestionService;
+        this.cloudflareImagesClient = cloudflareImagesClient;
         this.baseUrl = baseUrl;
         this.originatingSystem = originatingSystem;
 
@@ -272,8 +281,9 @@ public class MlsGridIngestionService {
 
         if (!canView) {
             // MlgCanView=false is MLS Grid's deletion mechanism.
-            // The record no longer qualifies for the feed and must be removed.
+            // Delete the local row + clean up any Cloudflare-hosted media we still own.
             listingRepository.findByListingKey(listingKey).ifPresent(existing -> {
+                deleteCloudflareMedia(existing);
                 listingRepository.delete(existing);
                 log.debug("Deleted listing [{}]", listingKey);
             });
@@ -286,17 +296,65 @@ public class MlsGridIngestionService {
         Optional<Listing> existing = listingRepository.findByListingKey(listingKey);
 
         if (existing.isPresent()) {
-            // UPDATE path: inject the existing DB surrogate id so JPA does an UPDATE
-            // rather than an INSERT. Preserve any locally-computed fields the MLS feed
-            // doesn't know about (amenityScores is computed by AmenityScoreService).
-            mapped.setId(existing.get().getId());
-            mapped.setAmenityScores(existing.get().getAmenityScores());
-            listingRepository.save(mapped);
+            // UPDATE path: preserve surrogate id + locally-computed fields the MLS
+            // feed knows nothing about (amenityScores, photoIds, etc.).
+            Listing prev = existing.get();
+            mapped.setId(prev.getId());
+            mapped.setAmenityScores(prev.getAmenityScores());
+
+            // Re-ingest media only when the upstream Media array actually changed —
+            // otherwise carry forward the existing Cloudflare Image IDs and skip
+            // the expensive download + upload cycle.
+            boolean mediaChanged = !Objects.equals(mapped.getMediaJson(), prev.getMediaJson());
+            if (!mediaChanged) {
+                mapped.setPhotoIds(prev.getPhotoIds());
+                mapped.setFloorPlanIds(prev.getFloorPlanIds());
+                mapped.setVirtualTourUrls(prev.getVirtualTourUrls());
+                mapped.setMediaIngestionStatus(prev.getMediaIngestionStatus());
+            } else {
+                // Mark pending; the async pipeline will flip it to COMPLETE/FAILED.
+                mapped.setMediaIngestionStatus("PENDING");
+            }
+
+            Listing saved = listingRepository.save(mapped);
+            if (mediaChanged) {
+                mediaIngestionService.ingestForListingAsync(saved.getId());
+            }
             return RecordOutcome.UPDATED;
+
         } else {
-            // INSERT path: no id set — JPA auto-generates one via IDENTITY strategy
-            listingRepository.save(mapped);
+            // INSERT path: no id set — JPA auto-generates one via IDENTITY strategy.
+            mapped.setMediaIngestionStatus("PENDING");
+            Listing saved = listingRepository.save(mapped);
+            mediaIngestionService.ingestForListingAsync(saved.getId());
             return RecordOutcome.INSERTED;
+        }
+    }
+
+    /**
+     * Best-effort cleanup of Cloudflare-hosted media when a listing is being
+     * deleted (MlgCanView=false). Failures here are logged but do not block
+     * the deletion — orphaned CF images are wasted storage, not a correctness bug.
+     */
+    private void deleteCloudflareMedia(Listing listing) {
+        if (!cloudflareImagesClient.isConfigured()) return;
+        deleteIdsJson(listing.getPhotoIds());
+        deleteIdsJson(listing.getFloorPlanIds());
+    }
+
+    private void deleteIdsJson(String idsJson) {
+        if (idsJson == null || idsJson.isBlank()) return;
+        try {
+            JsonNode arr = objectMapper.readTree(idsJson);
+            if (!arr.isArray()) return;
+            for (JsonNode idNode : arr) {
+                String id = idNode.asText(null);
+                if (id != null && !id.isBlank()) {
+                    cloudflareImagesClient.deleteImage(id);
+                }
+            }
+        } catch (Exception e) {
+            log.warn("Failed to delete Cloudflare media for orphaned listing: {}", e.getMessage());
         }
     }
 
