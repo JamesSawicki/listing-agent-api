@@ -5,7 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import java.util.Collection;
 import java.util.List;
-
+import org.springframework.data.jpa.repository.Query;
+import java.time.Instant;
+import java.util.Optional;
 /**
  * ListingRepository — Spring Data JPA repository for Listing entities.
  *
@@ -28,4 +30,12 @@ public interface ListingRepository
         extends JpaRepository<Listing, Long>, JpaSpecificationExecutor<Listing> {
 
         List<Listing> findByStatusIn(Collection<String> statuses);
+
+        // Upsert lookup — the entire delta sync strategy relies on this
+        Optional<Listing> findByListingKey(String listingKey);
+        
+        // Returns the greatest ModificationTimestamp in the DB.
+        // If null (empty DB), deltaSync falls back to a full historical pull.
+        @Query("SELECT MAX(l.modificationTimestamp) FROM Listing l WHERE l.modificationTimestamp IS NOT NULL")
+        Optional<Instant> findMaxModificationTimestamp();
 }

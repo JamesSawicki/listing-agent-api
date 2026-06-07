@@ -6,6 +6,19 @@
 -- Schema note: H2 requires column list when not inserting all columns.
 -- Columns not listed receive NULL. TEXT columns handle multi-sentence strings.
 -- Dates stored as ISO 8601 (YYYY-MM-DD) matching LocalDate field type in Listing.java
+--
+-- Type changes from Listing.java refactor (MLS Grid integration):
+--   fireplaces        String -> Integer  (bare integer, no quotes)
+--   association_fee   String -> Long     (bare integer, no quotes)
+--   tax_amount        String -> Long     (bare integer, no quotes)
+--   tax_year          String -> Integer  (bare integer, no quotes)
+--   tax_with_assessments stays String    (keeps quotes: NST format '1069.0400')
+--
+-- New nullable columns added to entity (receive NULL from this file, populated by ingestion):
+--   listing_key, mlg_can_view, modification_timestamp, original_entry_timestamp,
+--   mlg_can_use, off_market_date, postal_city, new_construction, contingency,
+--   parcel_number, zoning_description, school_district_number,
+--   primary_image_url, media_json
 
 INSERT INTO listings (
     mls_id, status, list_date, pending_date, close_date, days_on_market,
@@ -45,7 +58,7 @@ INSERT INTO listings (
     'Air-To-Air Exchanger, Dishwasher, Disposal, Dryer, Microwave, Range, Refrigerator, Washer, Water Softener - Owned',
     'Drain Tiled, Finished (Livable), Full, Sump Pump',
     'Forced Air', 'Central', 'Natural Gas',
-    'Gas Burning, Primary Bedroom', '2',
+    'Gas Burning, Primary Bedroom', 2,
     'Brick/Stone, Cedar', 'Deck, In-Ground Sprinkler',
     'Asphalt Shingles', '200+ Amp Service', 'City Sewer/Connected', 'City Water/Connected',
     'Partial, Wood', 'Corner Lot, Tree Coverage - Medium',
@@ -54,7 +67,7 @@ INSERT INTO listings (
     'Attached Garage, Driveway - Asphalt', 'Laundry Room, Lower Level', 'Cash, Conventional',
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
     NULL, NULL, NULL, NULL, NULL,
-    '12450', '2026', '12450',
+    12450, 2026, '12450',
     'Highlands', 'Highlands', 'Edina', '273 - Edina',
     'James Sawicki', '612-555-0100', '502000001',
     'Coldwell Banker Realty', '952-473-3000', '5141',
@@ -75,7 +88,7 @@ INSERT INTO listings (
     'Air-To-Air Exchanger, Central Vacuum, Cooktop, Dishwasher, Disposal, Dryer, Exhaust Fan/Hood, Microwave, Refrigerator, Wall Oven, Washer, Water Filtration System, Water Softener - Owned, Wine Cooler',
     'Drain Tiled, Finished (Livable), Full, Storage Space, Walkout',
     'Forced Air, In-Floor Heating, Radiant', 'Central', 'Natural Gas',
-    'Gas Burning, Primary Bedroom, Great Room', '3',
+    'Gas Burning, Primary Bedroom, Great Room', 3,
     'Stucco, Stone', 'Balcony, Deck, Patio, In-Ground Sprinkler',
     'Architectural Shingle', '200+ Amp Service', 'City Sewer/Connected', 'City Water/Connected',
     NULL, 'Accessible Shoreline, Tree Coverage - Light',
@@ -85,7 +98,7 @@ INSERT INTO listings (
     145, 'West, Lake', 'Lake Minnetonka', 'Lake',
     'General Development', '27013300', '14205.6', '113', 'Sand',
     NULL, NULL, NULL, NULL, NULL,
-    '28400', '2026', '28400',
+    28400, 2026, '28400',
     'Wayzata', 'Wayzata', 'Wayzata', '284 - Wayzata',
     'James Sawicki', '612-555-0100', '502000001',
     'Coldwell Banker Realty', '952-473-3000', '5141',
@@ -105,7 +118,7 @@ INSERT INTO listings (
     '[{"room":"Living Room","level":"Main","dim":"15x20"},{"room":"Kitchen","level":"Main","dim":"10x14"},{"room":"Bedroom 1","level":"Main","dim":"13x15"},{"room":"Bedroom 2","level":"Main","dim":"11x13"},{"room":"Den","level":"Main","dim":"9x11"}]',
     'Dishwasher, Disposal, Dryer, Microwave, Range, Refrigerator, Washer',
     'None', 'Forced Air', 'Central', 'Natural Gas',
-    NULL, '0',
+    NULL, 0,
     'Concrete, Block', 'Balcony',
     'Flat', '200+ Amp Service', 'City Sewer/Connected', 'City Water/Connected',
     NULL, NULL,
@@ -113,9 +126,9 @@ INSERT INTO listings (
     'Balcony, Ceiling Fan(s), City Views, Hardwood Floors, In-Unit Laundry, Panoramic View, Security System',
     'Assigned, Covered, Heated Garage, Underground', 'In-Unit', 'Cash, Conventional',
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    '698', 'Monthly', 'Hazard Insurance, Lawn Care, Maintenance Grounds, Professional Mgmt, Trash, Water',
+    698, 'Monthly', 'Hazard Insurance, Lawn Care, Maintenance Grounds, Professional Mgmt, Trash, Water',
     'FirstService Residential', '612-555-0200',
-    '5840', '2026', '5840',
+    5840, 2026, '5840',
     'Whittier', 'Jefferson', 'Southwest', '001 - Minneapolis',
     'James Sawicki', '612-555-0100', '502000001',
     'Coldwell Banker Realty', '952-473-3000', '5141',
@@ -136,7 +149,7 @@ INSERT INTO listings (
     'Air-To-Air Exchanger, Dishwasher, Disposal, Dryer, Furnace Humidifier, Microwave, Range, Refrigerator, Washer, Water Softener - Owned',
     'Drain Tiled, Finished (Livable), Full, Sump Pump',
     'Forced Air', 'Central', 'Natural Gas',
-    'Gas Burning, Family Room', '1',
+    'Gas Burning, Family Room', 1,
     'Brick/Stone, Vinyl', 'Deck',
     'Asphalt Shingles', '200+ Amp Service', 'City Sewer/Connected', 'City Water/Connected',
     NULL, 'Tree Coverage - Medium',
@@ -145,7 +158,7 @@ INSERT INTO listings (
     'Attached Garage, Driveway - Asphalt', 'Laundry Room, Main Level', 'Cash, Conventional, FHA',
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
     NULL, NULL, NULL, NULL, NULL,
-    '8200', '2026', '8200',
+    8200, 2026, '8200',
     'Cedar Ridge', 'Southwest', 'Eden Prairie', '272 - Eden Prairie',
     'James Sawicki', '612-555-0100', '502000001',
     'Coldwell Banker Realty', '952-473-3000', '5141',
@@ -166,7 +179,7 @@ INSERT INTO listings (
     'Dishwasher, Dryer, Microwave, Range, Refrigerator, Washer',
     'Block, Daylight/Lookout Windows, Finished (Livable), Partial',
     'Forced Air', 'Central', 'Natural Gas',
-    'Wood Burning, Family Room', '1',
+    'Wood Burning, Family Room', 1,
     'Brick/Stone, Vinyl', 'Deck',
     'Asphalt Shingles', 'Circuit Breakers', 'City Sewer/Connected', 'City Water/Connected',
     NULL, 'Tree Coverage - Light',
@@ -175,7 +188,7 @@ INSERT INTO listings (
     'Attached Garage, Driveway - Asphalt', 'In-Unit', 'Cash, Conventional, FHA',
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
     NULL, NULL, NULL, NULL, NULL,
-    '7100', '2025', '7100',
+    7100, 2025, '7100',
     'Scenic Heights', 'Minnetonka', 'Minnetonka', '276 - Minnetonka',
     'James Sawicki', '612-555-0100', '502000001',
     'Coldwell Banker Realty', '952-473-3000', '5141',
@@ -196,7 +209,7 @@ INSERT INTO listings (
     'Dishwasher, Disposal, Dryer, Microwave, Range, Refrigerator, Washer',
     'Finished (Livable), Full',
     'Forced Air', 'Central', 'Natural Gas',
-    NULL, '0',
+    NULL, 0,
     'Brick/Stone, Vinyl', 'Patio',
     'Asphalt Shingles', '200+ Amp Service', 'City Sewer/Connected', 'City Water/Connected',
     NULL, NULL,
@@ -204,9 +217,9 @@ INSERT INTO listings (
     'Ceiling Fan(s), Hardwood Floors, Kitchen Center Island, Primary Bedroom Walk-In Closet, Washer/Dryer Hookup',
     'Attached Garage, Driveway - Asphalt', 'In-Unit, Upper Level', 'Cash, Conventional',
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    '325', 'Monthly', 'Hazard Insurance, Lawn Care, Maintenance Grounds, Professional Mgmt, Snow Removal',
+    325, 'Monthly', 'Hazard Insurance, Lawn Care, Maintenance Grounds, Professional Mgmt, Snow Removal',
     'Associa', '763-555-0300',
-    '4980', '2026', '4980',
+    4980, 2026, '4980',
     'Sunset Hill', 'Wayzata', 'Wayzata', '284 - Wayzata',
     'James Sawicki', '612-555-0100', '502000001',
     'Coldwell Banker Realty', '952-473-3000', '5141',
@@ -227,7 +240,7 @@ INSERT INTO listings (
     'Air-To-Air Exchanger, Central Vacuum, Cooktop, Dishwasher, Disposal, Dryer, Exhaust Fan/Hood, Freezer, Furnace Humidifier, Microwave, Refrigerator, Wall Oven, Washer, Water Filtration System, Water Softener - Owned, Wine Cooler, Double Oven, Stainless Steel Appliances',
     'Drain Tiled, Finished (Livable), Full, Storage Space, Walkout',
     'Forced Air, In-Floor Heating, Radiant', 'Central', 'Natural Gas',
-    'Gas Burning, Great Room, Primary Bedroom', '4',
+    'Gas Burning, Great Room, Primary Bedroom', 4,
     'Cedar, Stone', 'Balcony, Deck, Dock, Outdoor Kitchen, Patio, Screened Porch',
     'Architectural Shingle, Metal', '200+ Amp Service', 'City Sewer/Connected', 'Well',
     NULL, 'Accessible Shoreline, Tree Coverage - Medium',
@@ -237,7 +250,7 @@ INSERT INTO listings (
     200, 'West, South, Lake', 'Lake Minnetonka', 'Lake',
     'General Development', '27013300', '14205.6', '113', 'Sand',
     NULL, NULL, NULL, NULL, NULL,
-    '64000', '2026', '64000',
+    64000, 2026, '64000',
     'Orono', 'Orono', 'Orono', '278 - Orono',
     'James Sawicki', '612-555-0100', '502000001',
     'Coldwell Banker Realty', '952-473-3000', '5141',
@@ -258,7 +271,7 @@ INSERT INTO listings (
     'Air-To-Air Exchanger, Dishwasher, Disposal, Dryer, Microwave, Range, Refrigerator, Washer, Water Softener - Owned',
     'Drain Tiled, Finished (Livable), Full, Walkout',
     'Forced Air', 'Central', 'Natural Gas',
-    'Gas Burning, Family Room, Primary Bedroom', '2',
+    'Gas Burning, Family Room, Primary Bedroom', 2,
     'Stucco', 'Deck, Patio',
     'Asphalt Shingles', '200+ Amp Service', 'City Sewer/Connected', 'City Water/Connected',
     'Partial', 'Tree Coverage - Heavy',
@@ -267,7 +280,7 @@ INSERT INTO listings (
     'Attached Garage, Driveway - Asphalt', 'Laundry Room, Main Level', 'Cash, Conventional',
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
     NULL, NULL, NULL, NULL, NULL,
-    '18200', '2026', '18200',
+    18200, 2026, '18200',
     'Minnetonka Beach', 'Wayzata', 'Wayzata', '284 - Wayzata',
     'James Sawicki', '612-555-0100', '502000001',
     'Coldwell Banker Realty', '952-473-3000', '5141',
@@ -288,7 +301,7 @@ INSERT INTO listings (
     'Air-To-Air Exchanger, Cooktop, Dishwasher, Disposal, Dryer, Refrigerator, Wall Oven, Washer, Water Softener - Owned',
     'Drain Tiled, Finished (Livable), Full, Walkout',
     'Forced Air', 'Central', 'Natural Gas',
-    'Gas Burning, Living Room', '1',
+    'Gas Burning, Living Room', 1,
     'Brick/Stone, Cedar', 'Deck, Patio',
     'Asphalt Shingles', '200+ Amp Service', 'City Sewer/Connected', 'City Water/Connected',
     'None', 'Tree Coverage - Heavy',
@@ -297,7 +310,7 @@ INSERT INTO listings (
     'Attached Garage, Driveway - Asphalt', 'Laundry Room, Lower Level', 'Cash, Conventional',
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
     NULL, NULL, NULL, NULL, NULL,
-    '14800', '2026', '14800',
+    14800, 2026, '14800',
     'Cottagewood', 'Minnetonka', 'Minnetonka', '276 - Minnetonka',
     'James Sawicki', '612-555-0100', '502000001',
     'Coldwell Banker Realty', '952-473-3000', '5141',
@@ -318,7 +331,7 @@ INSERT INTO listings (
     'Dishwasher, Dryer, Microwave, Range, Refrigerator, Washer',
     'Finished (Livable), Full',
     'Forced Air', 'Central', 'Natural Gas',
-    'Wood Burning, Living Room', '1',
+    'Wood Burning, Living Room', 1,
     'Stucco', 'Patio',
     'Asphalt Shingles', 'Circuit Breakers', 'City Sewer/Connected', 'City Water/Connected',
     'Full', 'Tree Coverage - Light',
@@ -327,7 +340,7 @@ INSERT INTO listings (
     'Detached Garage, Driveway - Asphalt', 'In-Unit', 'Cash, Conventional, FHA',
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
     NULL, NULL, NULL, NULL, NULL,
-    '6400', '2026', '6400',
+    6400, 2026, '6400',
     'Aquila', 'St. Louis Park', 'St. Louis Park', '283 - St. Louis Park',
     'James Sawicki', '612-555-0100', '502000001',
     'Coldwell Banker Realty', '952-473-3000', '5141',
@@ -347,7 +360,7 @@ INSERT INTO listings (
     '[{"room":"Living Room","level":"Main","dim":"13x16"},{"room":"Kitchen","level":"Main","dim":"8x12"},{"room":"Dining Room","level":"Main","dim":"9x11"},{"room":"Bedroom 1","level":"Main","dim":"12x14"},{"room":"Bedroom 2","level":"Main","dim":"10x12"}]',
     'Dishwasher, Disposal, Microwave, Range, Refrigerator',
     'None', 'Forced Air', 'Central', 'Natural Gas',
-    NULL, '0',
+    NULL, 0,
     'Brick/Stone', NULL,
     'Flat', 'Circuit Breakers', 'City Sewer/Connected', 'City Water/Connected',
     NULL, NULL,
@@ -355,9 +368,9 @@ INSERT INTO listings (
     'Hardwood Floors',
     'Assigned, Covered', 'Common Area', 'Cash, Conventional',
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    '598', 'Monthly', 'Hazard Insurance, Heat, Lawn Care, Maintenance Grounds, Professional Mgmt, Trash, Water',
+    598, 'Monthly', 'Hazard Insurance, Heat, Lawn Care, Maintenance Grounds, Professional Mgmt, Trash, Water',
     'Edina Realty Property Mgmt', '952-555-0400',
-    '3200', '2025', '3200',
+    3200, 2025, '3200',
     'Cornelia', 'Valley View', 'Edina', '273 - Edina',
     'James Sawicki', '612-555-0100', '502000001',
     'Coldwell Banker Realty', '952-473-3000', '5141',
@@ -378,7 +391,7 @@ INSERT INTO listings (
     'Dishwasher, Dryer, Range, Refrigerator, Washer',
     'Partial, Stone, Unfinished',
     'Forced Air, Radiator(s)', 'Window Unit(s)', 'Natural Gas',
-    'Wood Burning, Living Room', '1',
+    'Wood Burning, Living Room', 1,
     'Cedar', 'Porch',
     'Asphalt Shingles', 'Circuit Breakers', 'City Sewer/Connected', 'City Water/Connected',
     'Full', 'Tree Coverage - Medium',
@@ -387,7 +400,7 @@ INSERT INTO listings (
     'Detached Garage, Driveway - Asphalt', 'In-Unit, Lower Level', 'Cash, Conventional',
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
     NULL, NULL, NULL, NULL, NULL,
-    '9200', '2026', '9200',
+    9200, 2026, '9200',
     'Excelsior', 'Minnetonka', 'Minnetonka', '276 - Minnetonka',
     'James Sawicki', '612-555-0100', '502000001',
     'Coldwell Banker Realty', '952-473-3000', '5141',
@@ -408,7 +421,7 @@ INSERT INTO listings (
     'Dishwasher, Dryer, Furnace Humidifier, Microwave, Range, Refrigerator, Washer',
     'Block, Daylight/Lookout Windows, Finished (Livable), Partial',
     'Forced Air', 'Central', 'Natural Gas',
-    'Gas Burning, Family Room', '1',
+    'Gas Burning, Family Room', 1,
     'Brick/Stone, Vinyl', 'Deck',
     'Asphalt Shingles', 'Circuit Breakers', 'City Sewer/Connected', 'City Water/Connected',
     NULL, 'Tree Coverage - Medium',
@@ -417,7 +430,7 @@ INSERT INTO listings (
     'Attached Garage, Driveway - Asphalt', 'In-Unit, Lower Level', 'Cash, Conventional, FHA',
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
     NULL, NULL, NULL, NULL, NULL,
-    '7400', '2026', '7400',
+    7400, 2026, '7400',
     'Scenic Heights', 'Minnetonka', 'Minnetonka', '276 - Minnetonka',
     'James Sawicki', '612-555-0100', '502000001',
     'Coldwell Banker Realty', '952-473-3000', '5141',
@@ -438,7 +451,7 @@ INSERT INTO listings (
     'Air-To-Air Exchanger, Cooktop, Dishwasher, Disposal, Dryer, Exhaust Fan/Hood, Microwave, Refrigerator, Wall Oven, Washer, Water Softener - Owned',
     'Drain Tiled, Finished (Livable), Full, Sump Pump',
     'Forced Air', 'Central', 'Natural Gas',
-    'Gas Burning, Great Room, Primary Bedroom', '2',
+    'Gas Burning, Great Room, Primary Bedroom', 2,
     'Brick/Stone, Engineered Wood', 'Deck, Patio',
     'Asphalt Shingles', '200+ Amp Service', 'City Sewer/Connected', 'City Water/Connected',
     'Partial', 'Tree Coverage - Medium',
@@ -447,7 +460,7 @@ INSERT INTO listings (
     'Attached Garage, Driveway - Asphalt, Heated Garage', 'Laundry Room, Main Level', 'Cash, Conventional',
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
     NULL, NULL, NULL, NULL, NULL,
-    '10800', '2026', '10800',
+    10800, 2026, '10800',
     'Long Lake', 'Wayzata', 'Wayzata', '284 - Wayzata',
     'James Sawicki', '612-555-0100', '502000001',
     'Coldwell Banker Realty', '952-473-3000', '5141',
@@ -468,7 +481,7 @@ INSERT INTO listings (
     'Dishwasher, Dryer, Range, Refrigerator, Washer',
     'Finished (Livable), Full',
     'Forced Air', 'Central', 'Natural Gas',
-    NULL, '0',
+    NULL, 0,
     'Vinyl', 'None',
     'Asphalt Shingles', 'Circuit Breakers', 'City Sewer/Connected', 'City Water/Connected',
     NULL, 'Tree Coverage - Light',
@@ -477,7 +490,7 @@ INSERT INTO listings (
     'Detached Garage, Driveway - Asphalt', 'In-Unit, Lower Level', 'Cash, Conventional, FHA, VA',
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
     NULL, NULL, NULL, NULL, NULL,
-    '4100', '2026', '4100',
+    4100, 2026, '4100',
     'Hopkins', 'Eisenhower', 'Hopkins', '270 - Hopkins',
     'James Sawicki', '612-555-0100', '502000001',
     'Coldwell Banker Realty', '952-473-3000', '5141',
@@ -498,7 +511,7 @@ INSERT INTO listings (
     'Air-To-Air Exchanger, Central Vacuum, Cooktop, Dishwasher, Disposal, Dryer, Exhaust Fan/Hood, Furnace Humidifier, Refrigerator, Wall Oven, Washer, Water Softener - Owned',
     'Drain Tiled, Finished (Livable), Full, Walkout',
     'Forced Air, In-Floor Heating', 'Central', 'Natural Gas',
-    'Gas Burning, Great Room, Primary Bedroom', '3',
+    'Gas Burning, Great Room, Primary Bedroom', 3,
     'Stucco, Stone', 'Deck, Patio, Screened Porch',
     'Architectural Shingle', '200+ Amp Service', 'City Sewer/Connected', 'City Water/Connected',
     NULL, 'Tree Coverage - Medium',
@@ -507,7 +520,7 @@ INSERT INTO listings (
     'Attached Garage, Driveway - Asphalt, Heated Garage', 'Laundry Room, Main Level', 'Cash, Conventional',
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
     NULL, NULL, NULL, NULL, NULL,
-    '24000', '2025', '24000',
+    24000, 2025, '24000',
     'Wayzata', 'Wayzata', 'Wayzata', '284 - Wayzata',
     'James Sawicki', '612-555-0100', '502000001',
     'Coldwell Banker Realty', '952-473-3000', '5141',
@@ -528,7 +541,7 @@ INSERT INTO listings (
     'Air-To-Air Exchanger, Dishwasher, Disposal, Dryer, Furnace Humidifier, Microwave, Range, Refrigerator, Washer, Water Softener - Owned',
     'Drain Tiled, Finished (Livable), Full, Sump Pump',
     'Forced Air', 'Central', 'Natural Gas',
-    'Gas Burning, Family Room', '1',
+    'Gas Burning, Family Room', 1,
     'Brick/Stone, Cedar', 'Deck',
     'Asphalt Shingles', '200+ Amp Service', 'City Sewer/Connected', 'City Water/Connected',
     NULL, 'Tree Coverage - Medium',
@@ -537,7 +550,7 @@ INSERT INTO listings (
     'Attached Garage, Driveway - Asphalt', 'Laundry Room, Lower Level', 'Cash, Conventional',
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
     NULL, NULL, NULL, NULL, NULL,
-    '8600', '2026', '8600',
+    8600, 2026, '8600',
     'Minnetonka', 'Minnetonka', 'Minnetonka', '276 - Minnetonka',
     'James Sawicki', '612-555-0100', '502000001',
     'Coldwell Banker Realty', '952-473-3000', '5141',
@@ -558,7 +571,7 @@ INSERT INTO listings (
     'Air-To-Air Exchanger, Central Vacuum, Cooktop, Dishwasher, Disposal, Dryer, Exhaust Fan/Hood, Furnace Humidifier, Refrigerator, Wall Oven, Washer, Water Filtration System, Water Softener - Owned',
     'Drain Tiled, Finished (Livable), Full, Storage Space, Walkout',
     'Forced Air, In-Floor Heating, Radiant', 'Central', 'Natural Gas',
-    'Gas Burning, Great Room, Primary Bedroom', '2',
+    'Gas Burning, Great Room, Primary Bedroom', 2,
     'Cedar, Stone', 'Deck, Patio, Screened Porch',
     'Architectural Shingle', '200+ Amp Service', 'City Sewer/Connected', 'Well',
     'Partial', 'Tree Coverage - Heavy',
@@ -567,7 +580,7 @@ INSERT INTO listings (
     'Attached Garage, Driveway - Asphalt, Heated Garage, Insulated Garage', 'Laundry Room, Main Level', 'Cash, Conventional',
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
     NULL, NULL, NULL, NULL, NULL,
-    '22000', '2026', '22000',
+    22000, 2026, '22000',
     'Orono', 'Orono', 'Orono', '278 - Orono',
     'James Sawicki', '612-555-0100', '502000001',
     'Coldwell Banker Realty', '952-473-3000', '5141',
@@ -587,7 +600,7 @@ INSERT INTO listings (
     '[{"room":"Living Room","level":"Main","dim":"12x16"},{"room":"Kitchen","level":"Main","dim":"9x12"},{"room":"Dining Room","level":"Main","dim":"9x10"},{"room":"Bedroom 1","level":"Upper","dim":"12x14"},{"room":"Bedroom 2","level":"Upper","dim":"10x12"},{"room":"Loft","level":"Upper","dim":"8x10"}]',
     'Dishwasher, Disposal, Dryer, Microwave, Range, Refrigerator, Washer',
     'None', 'Forced Air', 'Central', 'Natural Gas',
-    NULL, '0',
+    NULL, 0,
     'Vinyl', 'Patio',
     'Asphalt Shingles', '200+ Amp Service', 'City Sewer/Connected', 'City Water/Connected',
     NULL, NULL,
@@ -595,9 +608,9 @@ INSERT INTO listings (
     'Ceiling Fan(s), Vaulted Ceiling(s), Walk-In Closet',
     'Attached Garage, Driveway - Asphalt', 'In-Unit, Upper Level', 'Cash, Conventional, FHA',
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    '268', 'Monthly', 'Hazard Insurance, Lawn Care, Maintenance Grounds, Professional Mgmt, Snow Removal, Trash',
+    268, 'Monthly', 'Hazard Insurance, Lawn Care, Maintenance Grounds, Professional Mgmt, Snow Removal, Trash',
     'Cities Management', '952-555-0500',
-    '3900', '2026', '3900',
+    3900, 2026, '3900',
     'Scenic Heights', 'Minnetonka', 'Minnetonka', '276 - Minnetonka',
     'James Sawicki', '612-555-0100', '502000001',
     'Coldwell Banker Realty', '952-473-3000', '5141',
@@ -618,7 +631,7 @@ INSERT INTO listings (
     'Air-To-Air Exchanger, Dishwasher, Disposal, Dryer, Furnace Humidifier, Microwave, Range, Refrigerator, Washer, Water Softener - Owned',
     'Drain Tiled, Finished (Livable), Full, Sump Pump',
     'Forced Air', 'Central', 'Natural Gas',
-    'Gas Burning, Family Room', '1',
+    'Gas Burning, Family Room', 1,
     'Brick/Stone, Vinyl', 'Deck',
     'Asphalt Shingles', '200+ Amp Service', 'City Sewer/Connected', 'City Water/Connected',
     NULL, 'Tree Coverage - Light',
@@ -627,42 +640,31 @@ INSERT INTO listings (
     'Attached Garage, Driveway - Asphalt', 'Laundry Room, Main Level', 'Cash, Conventional',
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
     NULL, NULL, NULL, NULL, NULL,
-    '8900', '2026', '8900',
+    8900, 2026, '8900',
     'Victoria', 'Chaska', 'Chaska', '112 - Eastern Carver County',
     'James Sawicki', '612-555-0100', '502000001',
     'Coldwell Banker Realty', '952-473-3000', '5141',
     'Beautiful Deer Run two-story on a private lot backing to trees. Updated kitchen with granite countertops, center island, and stainless appliances. Hardwood floors on main level. Family room with gas fireplace. Four upper bedrooms. Primary suite with walk-in closet and private bath. Finished lower level with recreation room, office, and rough-in bath. Three-car garage. In-ground sprinkler. Eastern Carver County schools.',
     41, 'From Hwy 5, south on Deer Run Dr into Deer Run neighborhood.'
 );
--- =============================================================================
--- COORDINATES — Map Search Phase 1
--- =============================================================================
--- WGS-84 decimal degrees. Approximated from street address + known geography.
--- Will be replaced with authoritative values from the RESO MLS feed.
---
--- Twin Cities coordinate bounds for reference:
---   Lat: 44.70 (south Carver Co.) to 45.25 (north metro)
---   Lng: -94.10 (west) to -92.70 (east) — negative = west of prime meridian
---
--- UPDATE runs after INSERT on every boot (create-drop rebuilds schema first).
 
-UPDATE listings SET latitude = 44.9018, longitude = -93.3847 WHERE mls_id = '7001001'; -- Edina, Interlachen Park
-UPDATE listings SET latitude = 44.9300, longitude = -93.5210 WHERE mls_id = '7001002'; -- Wayzata, Ferndale Rd (lakefront)
-UPDATE listings SET latitude = 44.9792, longitude = -93.2568 WHERE mls_id = '7001003'; -- Minneapolis, Mill District
-UPDATE listings SET latitude = 44.8445, longitude = -93.4580 WHERE mls_id = '7001004'; -- Eden Prairie
-UPDATE listings SET latitude = 44.9210, longitude = -93.4215 WHERE mls_id = '7001005'; -- Minnetonka, Shady Oak
-UPDATE listings SET latitude = 45.0215, longitude = -93.4310 WHERE mls_id = '7001006'; -- Plymouth
-UPDATE listings SET latitude = 44.9873, longitude = -93.6234 WHERE mls_id = '7001007'; -- Orono, Shadywood (lakefront)
-UPDATE listings SET latitude = 44.9548, longitude = -93.5720 WHERE mls_id = '7001008'; -- Minnetonka Beach
-UPDATE listings SET latitude = 44.9210, longitude = -93.5558 WHERE mls_id = '7001009'; -- Deephaven, Cottagewood
-UPDATE listings SET latitude = 44.9278, longitude = -93.3590 WHERE mls_id = '7001010'; -- St. Louis Park, Minikahda Vista
-UPDATE listings SET latitude = 44.9070, longitude = -93.3420 WHERE mls_id = '7001011'; -- Edina, 50th & France
-UPDATE listings SET latitude = 44.9025, longitude = -93.5640 WHERE mls_id = '7001012'; -- Excelsior, downtown
-UPDATE listings SET latitude = 44.9378, longitude = -93.4758 WHERE mls_id = '7001013'; -- Minnetonka, Glenwood
-UPDATE listings SET latitude = 44.9865, longitude = -93.5845 WHERE mls_id = '7001014'; -- Long Lake
-UPDATE listings SET latitude = 44.9248, longitude = -93.4115 WHERE mls_id = '7001015'; -- Hopkins
-UPDATE listings SET latitude = 44.9748, longitude = -93.5195 WHERE mls_id = '7001016'; -- Wayzata, Bushaway
-UPDATE listings SET latitude = 44.8978, longitude = -93.5535 WHERE mls_id = '7001017'; -- Shorewood
-UPDATE listings SET latitude = 44.9820, longitude = -93.6275 WHERE mls_id = '7001018'; -- Orono, Orono Orchard
-UPDATE listings SET latitude = 44.9280, longitude = -93.4750 WHERE mls_id = '7001019'; -- Minnetonka, Ironwood Ct
-UPDATE listings SET latitude = 44.8580, longitude = -93.6510 WHERE mls_id = '7001020'; -- Victoria, Deer Run
+UPDATE listings SET latitude = 44.9018, longitude = -93.3847 WHERE mls_id = '7001001';
+UPDATE listings SET latitude = 44.9300, longitude = -93.5210 WHERE mls_id = '7001002';
+UPDATE listings SET latitude = 44.9792, longitude = -93.2568 WHERE mls_id = '7001003';
+UPDATE listings SET latitude = 44.8445, longitude = -93.4580 WHERE mls_id = '7001004';
+UPDATE listings SET latitude = 44.9210, longitude = -93.4215 WHERE mls_id = '7001005';
+UPDATE listings SET latitude = 45.0215, longitude = -93.4310 WHERE mls_id = '7001006';
+UPDATE listings SET latitude = 44.9873, longitude = -93.6234 WHERE mls_id = '7001007';
+UPDATE listings SET latitude = 44.9548, longitude = -93.5720 WHERE mls_id = '7001008';
+UPDATE listings SET latitude = 44.9210, longitude = -93.5558 WHERE mls_id = '7001009';
+UPDATE listings SET latitude = 44.9278, longitude = -93.3590 WHERE mls_id = '7001010';
+UPDATE listings SET latitude = 44.9070, longitude = -93.3420 WHERE mls_id = '7001011';
+UPDATE listings SET latitude = 44.9025, longitude = -93.5640 WHERE mls_id = '7001012';
+UPDATE listings SET latitude = 44.9378, longitude = -93.4758 WHERE mls_id = '7001013';
+UPDATE listings SET latitude = 44.9865, longitude = -93.5845 WHERE mls_id = '7001014';
+UPDATE listings SET latitude = 44.9248, longitude = -93.4115 WHERE mls_id = '7001015';
+UPDATE listings SET latitude = 44.9748, longitude = -93.5195 WHERE mls_id = '7001016';
+UPDATE listings SET latitude = 44.8978, longitude = -93.5535 WHERE mls_id = '7001017';
+UPDATE listings SET latitude = 44.9820, longitude = -93.6275 WHERE mls_id = '7001018';
+UPDATE listings SET latitude = 44.9280, longitude = -93.4750 WHERE mls_id = '7001019';
+UPDATE listings SET latitude = 44.8580, longitude = -93.6510 WHERE mls_id = '7001020';

@@ -22,7 +22,7 @@ POST {{baseUrl}}/api/scoring/refresh-all
 Authorization: {{adminAuth}}
 
 ### Synchronously recompute one listing (5-15 seconds wait)
-POST {{baseUrl}}/api/scoring/listings/3
+POST {{baseUrl}}/api/scoring/listings/7
 Authorization: {{adminAuth}}
 
 ### Verify scores populated
@@ -48,3 +48,31 @@ Content-Type: application/json
   "latitude": 44.9778,
   "longitude": -93.2650
 }
+
+// NorthstarMLS Demo
+
+### ─── MLS GRID DEMO ─────────────────────────────────────────────
+@mlsGridDemoUrl = https://api-demo.mlsgrid.com/v2
+@mlsGridToken = 03c7efa16339fc79dc710eea89c63ae5350728d5
+
+### 1. Pull metadata — shows all OriginatingSystemName values you have access to
+GET {{mlsGridDemoUrl}}/$metadata
+Authorization: {{mlsGridToken}}
+
+### 2. Check which MLSs are in this demo subscription
+###    MlgCanView=true filters to live/displayable records only
+GET {{mlsGridDemoUrl}}/Property?$select=OriginatingSystemName&$top=50&$filter=MlgCanView eq true
+Authorization: {{mlsGridToken}}
+
+### 3. Once you know the OriginatingSystemName for NorthstarMLS (probably 'northstar' or 'mnnorthstar'),
+###    pull one record with everything expanded
+GET {{mlsGridDemoUrl}}/Property?$filter=OriginatingSystemName eq 'northstar' and MlgCanView eq true&$top=1&$expand=Media,Rooms
+Authorization: {{mlsGridToken}}
+
+### 4. If northstar doesn't work, try these variants:
+GET {{mlsGridDemoUrl}}/Property?$filter=OriginatingSystemName eq 'nstar' and MlgCanView eq true&$top=1
+Authorization: {{mlsGridToken}}
+
+### 5. Pull raw metadata for NorthstarMLS specifically — field definitions
+GET {{mlsGridDemoUrl}}/$metadata?$filter=OriginatingSystemName eq 'northstar'
+Authorization: {{mlsGridToken}}
